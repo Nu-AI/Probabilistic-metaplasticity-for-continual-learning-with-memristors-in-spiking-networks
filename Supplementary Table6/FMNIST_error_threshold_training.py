@@ -1,6 +1,5 @@
 
 # split-MNIST classification with memristor weights
-# no variability
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -245,10 +244,7 @@ def mem_class_train (params):
 	np.random.seed(seed)
 	Acc = np.zeros((n_tasks,n_tasks,n_runs))
 	for run in range(n_runs):
-		#m_in = np.zeros((n_h1))   # every run the metaplasticity factors start at 0
-		#m_out = np.zeros((n_out))
-		
-		#print("Run",run)
+
 		# Randomly select train and test samples
 		trainInd = np.random.choice(len(TrainIm_), n_train, replace=False)
 		TrainIm = TrainIm_[trainInd]
@@ -271,10 +267,7 @@ def mem_class_train (params):
 			ttt.append(len(temp_trainInd))
 		
 		with tqdm(total=n_tasks*maxE*int(np.mean(ttt))*nBins,desc="Run {} of params index {}".format(run,ind_),position=ind_) as pbar:
-			#m_in_rec = np.zeros((n_h1, n_tasks))
-			#m_out_rec = np.zeros(( n_out, n_tasks))
-			#w_in_rec = np.zeros((n_h1, n_in, n_tasks))
-			#w_out_rec = np.zeros(( n_out, n_h1, n_tasks))
+			
 			cross_ind_in = 0 
 			cross_ind_out = 0
 			for d in range(n_tasks): #n_tasks
@@ -283,7 +276,6 @@ def mem_class_train (params):
 				w_in, r_in = weight_initialize_var(n_h1, n_in, R_fh, R_bh, n_cross, w_in_max)
 				w_out, r_out = weight_initialize_var(n_out, n_h1, R_fo, R_bo, n_cross, w_out_max)
 
-				#print("Task",d)
 				trainInd = np.concatenate((np.where(TrainLabels == taskID[d,0])[0],np.where(TrainLabels == taskID[d,1])[0]),axis=0)
 				n_train2 = len(trainInd)
 				trainInd2 = np.random.choice(len(trainInd), n_train2, replace=False)
@@ -296,11 +288,8 @@ def mem_class_train (params):
 
 				n_train2 = len(trainInd)
 				for e in range(maxE):
-					for u in range(n_train2): #n_train2
-						# c_in = np.zeros([n_h1,n_in])   # for every sample the no of updates to w starts with 0
-						# c_out = np.zeros([n_out, n_h1])
-						#if u%3000 == 0:
-						#	print("sample",u)
+					for u in range(n_train2):
+					
 						im = trainSet[u]
 						fr = im*MaxF
 						spikeMat = MNIST_to_Spikes(MaxF, trainSet[u], tSim, dt_conv)
@@ -313,13 +302,13 @@ def mem_class_train (params):
 						I1 = np.zeros(n_h1)
 						V1 = np.zeros(n_h1)
 						U1 = np.zeros(n_h1)
-						#Xh_in = np.zeros(n_h1)
+						
 						
 						# Initialize output layer variables
 						I2 = np.zeros(n_out)
 						V2 = np.zeros(n_out)
 						U2 = np.zeros(n_out)
-						#Xh_out = np.zeros(n_out)
+						
 						
 						# Initialize error neuron variables
 						Verr1 = np.zeros(n_out)
@@ -352,7 +341,6 @@ def mem_class_train (params):
 
 							ST1 = np.zeros(n_h1) # Hidden layer spiking activity
 							ST1[fired] = 1 # Set neurons that spiked to 1
-							#Xh_in = Xh_in + ST1 - Xh_in/t_tr
 							
 							# Repeat the process for the output layer
 							I2 += (dt/t_syn1)*(w_out.dot(ST1) - I2)
@@ -370,7 +358,7 @@ def mem_class_train (params):
 							# Make array of output neuron spikes
 							ST2 = np.zeros(n_out)
 							ST2[fired2] = 1
-							#Xh_out = Xh_out + ST2 - Xh_out/t_tr
+							
 
 							# Compare with target spikes for this time step
 							Ierr = (ST2 - s_label[:, t])
@@ -514,16 +502,11 @@ def mem_class_train (params):
 	jsonFile = open(filename, "w")
 	jsonFile.write(jsonString)
 	jsonFile.close()
-	#for i in range(n_tasks):
-	#	print("for tasks no ",i, "the mean and std is ",avg_task_acc[i,i]," ",avg_task_std[i,i])
-
 
 
 	return results
 	
-#def update(*a): 
-#	pbar.update()
-	
+
 #weight parameters
 lr_factor = 7
 w_in_max = 3
@@ -602,36 +585,19 @@ Vth = (1/t_m)*R*Vs # Hidden neuron threshold
 VthO = (1/t_mH)*RH*VsO # Output neuron threshold
 VthE = (1/t_mE)*RE*VsE # Error neuron threshold
 
-# metaplasticity parameters
-#np.random.seed(2)
+
 seeds = []
 n_parallel = 5
 
-U_inL = [0.45] #, 0.3, 0.35, 0.4, 0.45, 0.5]
+U_inL = [0.45] 
 U_outL =  [ 2.25]
-#m_in_max = 10
-#m_out_max = 10
 
-
-# loading data
-#load_type = "mnist"
 
 TrainIm_, TrainL_, TestIm_, TestL_ = data_load()
-#TrainIm_ = np.array(TrainIm_) # convert to ndarray
-#TrainL_ = np.array(TrainL_)
-#TrainIm_ = TrainIm_ / TrainIm_.max() # scale to [0, 1] interval
 
-
-#TestIm_ = np.array(TestIm_) # convert to ndarray
-#TestL_ = np.array(TestL_)
-#TestIm_ = TestIm_ / TestIm_.max() # scale to [0, 1] interval
 
 ind_ = 0
-#U_in = 0.3   #[0.1, 0.15, 0.2, 0.25, 0.3]
-#U_out =  2.25  #[2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75]	
-#for i in dm_outL:
-#	for j in m_in_maxL:
-#		for k in m_out_maxL:
+
 params = []
 for i in U_inL:
 	for j in U_outL:
@@ -641,8 +607,8 @@ for i in U_inL:
 
 if __name__ == '__main__':
 
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock()) 
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/8))
-	p.map(mem_class_train, params) # temp_results.append(p.map(train__, params))
+	p.map(mem_class_train, params)
 	p.close()
 	p.join()
