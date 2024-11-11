@@ -223,8 +223,7 @@ def check_accuracy(images, labels, w_in, w_out):
 			ST2[fired2] = 1
 
 			cnt += ST2
-#         print("the count",cnt)
-#         print("target",labels[u])
+
 		if np.count_nonzero(cnt) != 0:  # Avoid counting no spikes as predicting label 0
 			prediction = np.argmax(cnt)
 			target = labels[u]
@@ -242,19 +241,7 @@ def train_run(params):
 
 	np.random.seed(2)
 	Acc = np.zeros((n_tasks,n_tasks,n_runs))
-	#run-stastistic variables initialized
-	#up_hid_count_run = np.zeros((n_tasks, n_runs)) #hidden weights to be updated in each task and run
-	#up_out_count_run = np.zeros((n_tasks, n_runs)) #output weights to be updated in each task and run
-	#up_hid_loopcount_run = np.zeros((n_tasks, n_runs)) #hidden weights update loop accessed
-	#up_out_loopcount_run = np.zeros((n_tasks, n_runs)) #output weights update loop accessed
-	#hid_l1_count_run = np.zeros((n_tasks, n_runs)) #accumulates #times hidden layer loop 1 is accessed in a task in a run
-	#out_l1_count_run = np.zeros((n_tasks, n_runs)) #accumulates #times output layer loop 1 is accessed in a task in a run
-	#hid_l2_count_run = np.zeros((n_tasks, n_runs)) #accumulates #times hidden layer loop 2 is accessed in a task in a run
-	#out_l2_count_run = np.zeros((n_tasks, n_runs)) #accumulates #times output layer loop 1 is accessed in a task in a run
-	#mean_hid_pre_count = np.zeros((n_tasks, n_runs)) # mean #active hidden pre-synaptic neurons 
-	#mean_hid_post_count = np.zeros((n_tasks, n_runs)) # mean #active hidden post-synaptic neurons 
-	# mean_out_pre_count = np.zeros((n_tasks, n_runs)) # mean #active output pre-synaptic neurons 
-	# mean_out_post_count = np.zeros((n_tasks, n_runs)) # mean #active output post-synaptic neurons 
+	
 	for run in range(n_runs):
 		print("run", run)
 		t0 = time.time()
@@ -267,31 +254,16 @@ def train_run(params):
 		TestIm = TestIm_[testInd]
 		TestLabels = TestL_[testInd]
 
-		
-
-
 		# Generate random feedback weights
 		w_err_factor = 0.15
 		w_err_h1p = ((np.random.rand(n_h1,n_out))*2-1)*w_err_factor # these are random numbers from -1 to 1
 		w_err_h1n = w_err_h1p
 
-		# up_hid_count = np.zeros(n_tasks)
-		# up_out_count = np.zeros(n_tasks)
-		# up_hid_loopcount = np.zeros(n_tasks)
-		# up_out_loopcount = np.zeros(n_tasks)
-
-		# c_in_count = np.zeros((n_h1, n_in, n_tasks))
-		# c_out_count = np.zeros((n_out, n_h1, n_tasks))
 
 		ttt = []
 		for dd in range(n_tasks):
 			temp_trainInd = np.concatenate((np.where(TrainLabels == taskID[dd,0])[0],np.where(TrainLabels == taskID[dd,1])[0]),axis=0)
 			ttt.append(len(temp_trainInd))
-	#
-	#with tqdm(total=n_tasks*maxE*int(np.mean(ttt))*nBins,desc="Run {} of params index {}".format(run,ind_),position=ind_) as pbar:
-
-
-
 
 		with tqdm(total=n_tasks*maxE*int(np.mean(ttt))*nBins,desc="Run {} of params index {}".format(run,ind_),position=ind_) as pbar:
 			m_in_rec = np.zeros((n_h1, n_in, n_tasks))
@@ -310,19 +282,7 @@ def train_run(params):
 				# Generate forward pass weights
 				w_in, r_in = weight_initialize_var(n_h1, n_in, R_fh, R_bh, n_cross, w_in_max)
 				w_out, r_out = weight_initialize_var(n_out, n_h1, R_fo, R_bo, n_cross, w_out_max)
-				# # the task-statistics variables initialized before the start of a task
-				# up_hid_loopcount = 0 # accumulates #hidden weight update loop is entered
-				# up_out_loopcount = 0 # accumulates #hidden weight update loop is entered
-				# up_hid_list = [] #lists #hidden weights to update in a task
-				# up_out_list = [] #lists #hidden weights to update in a task
-				# hid_l1_count = 0 #accumulates #times hidden layer loop 1 is accessed in a task
-				# hid_l2_count = 0 #accumulates #times hidden layer loop 2 is accessed in a task
-				# out_l1_count = 0 #accumulates #times output layer loop 1 is accessed in a task
-				# out_l2_count = 0 #accumulates #times output layer loop 2is accessed in a task
-				# hid_pre_count = 0 #accumulates #hidden layer active pre-synaptic neurons in a task
-				# hid_post_count = 0 #accumulates #hidden layer active post-synaptic neurons in a task
-				# out_pre_count = 0 #accumulates #output layer active pre-synaptic neurons in a task
-				# out_post_count = 0 #accumulates #output layer active post-synaptic neurons in a task
+				
 
 				trainInd = np.concatenate((np.where(TrainLabels == taskID[d,0])[0],np.where(TrainLabels == taskID[d,1])[0]),axis=0)
 				n_train2 = len(trainInd)
@@ -455,49 +415,29 @@ def train_run(params):
 
 
 							if len(fired_in[0]) != 0:
-								# hid_l1_count += 1
 								pre_ind = fired_in
 								post_ind = np.nonzero((I1>Imin) & (I1<Imax))
 								if len(post_ind[0])>0:
-									# hid_l2_count += 1
 									UF = U1[post_ind[0]] # np.nozero wraps the array in a tuple
-									# hid_post_count += len(post_ind[0])
-									# hid_pre_count += len(pre_ind[0])
-									#m_up = m_in[np.ix_(post_ind[0], pre_ind[0])]
-									#w_up = w_in[np.ix_(post_ind[0], pre_ind[0])]
-									#fm_in = np.exp(-(np.abs(m_up*w_up)))
 									dw = -lr0*np.matlib.repmat(np.reshape(UF, (len(UF),1)), 1, len(pre_ind[0]))
 									U1_s[np.ix_(post_ind[0], pre_ind[0])] += dw  # U1_s accumulates the gradients for hidden weights
 
 
 
 							if len(fired[0]) != 0:
-								# out_l1_count += 1
 								pre_ind = fired
 								post_ind = np.nonzero((I2>Imin) & (I2<Imax))
 								if len(post_ind[0])>0:
-									# out_l2_count += 1
 									UF = U2[post_ind[0]]
-									# out_post_count += len(post_ind[0])
-									# out_pre_count += len(pre_ind[0])
-									#m_up = m_out[np.ix_(post_ind[0], pre_ind[0])]
-									#w_up = w_out[np.ix_(post_ind[0], pre_ind[0])]
-									#fm_out = np.exp(-(np.abs(m_up*w_up)))
 									dw = -lr1*np.matlib.repmat(np.reshape(UF, (len(UF),1)), 1, len(pre_ind[0]))
 									U2_s[np.ix_(post_ind[0], pre_ind[0])] +=  dw # U2_s accumulates the gradients for hidden weights
 
 
 
-
-							#UF1_ = U1_s/U_in  # dividing by U_in to check threshold crosses
-							#UF1_[np.where(UF1_>=0)] = np.floor(UF1_[np.where(UF1_>=0)]).astype(int)
-							#UF1_[np.where(UF1_<0)] = np.ceil(UF1_[np.where(UF1_<0)]).astype(int)
 							up = np.where(abs(U1_s)>=U_in)
 
 							if len(up[0])>0:
-								c_in_count[up[0], up[1], d] += 1		
-								# up_hid_loopcount += 1
-								# up_hid_list.append(len(up[0]))						
+								c_in_count[up[0], up[1], d] += 1							
 								current_ind = int(cross_ind_in%n_cross)
 								cross_ind_in = cross_ind_in+1 
 								s = np.sign(U1_s[up]) 
@@ -509,9 +449,7 @@ def train_run(params):
 
 							up = np.where(abs(U2_s)>=U_out)
 							if len(up[0])>0:
-								c_out_count[up[0], up[1], d] += 1
-								# up_out_loopcount += 1
-								# up_out_list.append(len(up[0]))							
+								c_out_count[up[0], up[1], d] += 1							
 								current_ind = int(cross_ind_out%n_cross)
 								cross_ind_out = cross_ind_out+1 
 								s = np.sign(U2_s[up]) 
@@ -519,27 +457,7 @@ def train_run(params):
 								r_out[up[0],up[1],current_ind] = res_program(r_out[up[0],up[1],current_ind], s)
 								w_out[up]  = res_to_weight(r_out[up], R_fo, R_bo)
 							pbar.update(1)
-						# h_in = np.where(Xh_in>m_th_in)[0]
-						# h_hid = np.where(Xh_hid>m_th_hid)[0]
-						# h_out = np.where(Xh_out>m_th_out)[0]
-						# m_in[np.ix_(h_hid,h_in)] = m_in[np.ix_(h_hid,h_in)] + dm_in
-						# m_out[np.ix_(h_out,h_hid)] = m_out[np.ix_(h_out,h_hid)] + dm_out
-						# m_in[np.where(m_in > m_in_max)] = m_in_max
-						# m_out[np.where(m_out > m_out_max)] = m_out_max
-
-				# task-statistics updated after each task
-				# up_hid_count_run[d, run] = np.mean(up_hid_list)
-				# up_out_count_run[d, run] = np.mean(up_out_list)
-				# up_hid_loopcount_run[d, run] = up_hid_loopcount
-				# up_out_loopcount_run[d, run] = up_out_loopcount
-				# hid_l1_count_run[d, run] = hid_l1_count
-				# out_l1_count_run[d, run] = out_l1_count
-				# hid_l2_count_run[d, run] = hid_l2_count
-				# out_l2_count_run[d, run] = out_l2_count
-				# mean_hid_pre_count[d, run] = hid_pre_count/ hid_l2_count
-				# mean_hid_post_count[d, run] = hid_post_count/ hid_l2_count
-				# mean_out_pre_count[d, run] = out_pre_count/ out_l2_count
-				# mean_out_post_count[d, run] = out_post_count/ out_l2_count
+						
 
 
 
@@ -578,9 +496,7 @@ def train_run(params):
 	for i in range(n_tasks):
 		class_Acc[i] = avg_task_acc[i,i]
 		class_std[i] = avg_task_std[i,i]
-	#print(class_Acc.shape)
-	#print(class_Acc[0])
-	#print(class_Acc[1])
+
 	cls_mean = (class_Acc[0]+class_Acc[1])/2  
 	cont_acc = np.mean(Acc,axis=0)[n_tasks-1]
 
@@ -603,15 +519,13 @@ def train_run(params):
 	jsonFile = open(filename, "w")
 	jsonFile.write(jsonString)
 	jsonFile.close()
-	#for i in range(n_tasks):
-		#print("for tasks no ",i, "the mean and std is ",avg_task_acc[i,i]," ",avg_task_std[i,i])
+	
 
 	
 
 	return cls_mean
 	
-# def run(config):
-# 	return train_run(config)
+
 
 
 lr_factor = 7
@@ -649,10 +563,7 @@ lr1 = 1e-3*lr_factor
 w_scale0 = 1e-0 # Weight scale in hidden layer
 w_scale1 = 1e-0 # Weight scale at output layer
 FPF = 1 # inhibits punshing target neuron (only use if training a specific output spike pattern)
-# d_w_in = w_in_max/n_level
-# d_w_out = w_out_max/n_level      
-# U_in = 0.75 #d_w_in/lr0
-# U_out =  0.06   #d_w_out/lr1
+
 
 # Simulation parameters
 tSim = 0.15 # Duration of simulation (seconds)
@@ -717,26 +628,6 @@ if __name__ == '__main__':
 
 
 	
-# #Creation of an hyperparameter problem
-# problem = HpProblem()
-
-# # Discrete hyperparameter (sampled with uniform prior)
-# problem.add_hyperparameter((0.1, 1.0), "U_in", default_value = 0.7)
-# problem.add_hyperparameter((0.01, 0.1), "U_out", default_value = 0.06)
-
-# evaluator = Evaluator.create(
-# 	run,
-# 	method="thread",
-# 	method_kwargs={
-# 		"num_workers": 4,
-# 		"callbacks": [TqdmCallback()]
-# 	},
-# )
-
-# # define your search
-# search = CBO(problem, evaluator,initial_points = [problem.default_configuration], log_dir = "/home/fatima/Dropbox/Fatima_Research/Server_48/FMNIST_experiments/Acc_Rule/Class/FMNIST_clsres", random_state = 42 )
-# print("Starting search....")
-# results = search.search(max_evals = 20)
 
 
 	
