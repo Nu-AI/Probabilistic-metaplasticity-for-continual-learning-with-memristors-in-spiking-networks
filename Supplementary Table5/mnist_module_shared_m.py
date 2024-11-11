@@ -643,12 +643,12 @@ U_in = 0.25
 U_out =  2.5 
 
 # metaplasticity parameters
-dm_inL = np.array([70e-4])#np.load('g_dm_in.npy')#[52.5e-4, 55e-4, 57.5e-4 ]#np.load('g_dm_in.npy')
-dm_outL = np.array([27.5e-4])#np.load('g_dm_out.npy') #[12.5e-4]#  
-m_th_inL = np.array([1.25])#np.load('g_m_th_in.npy')#[2.25]#
-m_th_hid1L = np.array([2.5])#np.load('g_m_th_hid1.npy')#[3]#
-m_th_hid2L = np.array([1.75])#np.load('g_m_th_hid2.npy')#[1]#np.load('g_m_th_hid2.npy')
-m_th_outL =  np.array([1.4])#np.load('g_m_th_out.npy') #[1.4]#
+dm_inL = np.array([70e-4])
+dm_outL = np.array([27.5e-4])
+m_th_inL = np.array([1.25])
+m_th_hid1L = np.array([2.5])
+m_th_hid2L = np.array([1.75])
+m_th_outL =  np.array([1.4])
 m_in_max = 10
 m_out_max = 10
 
