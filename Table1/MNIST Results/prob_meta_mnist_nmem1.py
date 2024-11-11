@@ -293,7 +293,6 @@ def mem_class_train (params):
 			cross_ind_out = 0
 			for d in range(n_tasks): 
 
-				#print("Task",d)
 				trainInd = np.concatenate((np.where(TrainLabels == taskID[d,0])[0],np.where(TrainLabels == taskID[d,1])[0]),axis=0)
 				n_train2 = len(trainInd)
 				trainInd2 = np.random.choice(len(trainInd), n_train2, replace=False)
@@ -307,8 +306,6 @@ def mem_class_train (params):
 				n_train2 = len(trainInd)
 				for e in range(maxE):
 					for u in range(n_train2): 
-						
-
 						im = trainSet[u]
 						fr = im*MaxF
 						spikeMat = MNIST_to_Spikes(MaxF, trainSet[u], tSim, dt_conv)
