@@ -1,6 +1,7 @@
 
 # split-MNIST continual learning
-# n_mem = 7
+# individual metaplasticity coefficients
+
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy.matlib
