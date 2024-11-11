@@ -225,12 +225,10 @@ def check_accuracy(images, labels, w_in, w_out):
 			ST2[fired2] = 1
 
 			cnt += ST2
-#         print("the count",cnt)
-#         print("target",labels[u])
+
 		if np.count_nonzero(cnt) != 0:  # Avoid counting no spikes as predicting label 0
 			prediction = np.argmax(cnt)
 			target = labels[u]
-			#if cnt[0] != cnt[1]: # Avoid counting equal number of spikes as predicting label 0
 			if prediction == target:
 				numCorrect += 1
 
