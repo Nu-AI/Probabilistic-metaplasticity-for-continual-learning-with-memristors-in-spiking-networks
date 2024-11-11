@@ -1,5 +1,3 @@
-# split-MNIST classification with memristor weights
-
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy.matlib
