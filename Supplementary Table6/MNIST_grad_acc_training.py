@@ -236,8 +236,7 @@ def check_accuracy(images, labels, w_in, w_out):
 			ST2[fired2] = 1
 
 			cnt += ST2
-#         print("the count",cnt)
-#         print("target",labels[u])
+
 		if np.count_nonzero(cnt) != 0:  # Avoid counting no spikes as predicting label 0
 			prediction = np.argmax(cnt)
 			target = labels[u]
@@ -508,9 +507,7 @@ def train_run(params):
 	for i in range(n_tasks):
 		class_Acc[i] = avg_task_acc[i,i]
 		class_std[i] = avg_task_std[i,i]
-	#print(class_Acc.shape)
-	#print(class_Acc[0])
-	#print(class_Acc[1])
+	
 	cls_mean = (class_Acc[0]+class_Acc[1])/2  
 	cont_acc = np.mean(Acc,axis=0)[n_tasks-1]
 
