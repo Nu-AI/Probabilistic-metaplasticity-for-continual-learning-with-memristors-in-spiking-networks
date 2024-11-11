@@ -1,6 +1,6 @@
 
 #split-MNIST continual learning
-#shared metaplastic coefficient
+#neuron-shared metaplastic coefficient
 
 import numpy as np
 import matplotlib.pyplot as plt
