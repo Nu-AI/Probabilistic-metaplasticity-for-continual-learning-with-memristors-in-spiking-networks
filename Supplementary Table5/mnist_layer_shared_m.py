@@ -1,6 +1,6 @@
 
-#split-MNIST continual learning
-#shared metaplastic coefficient
+# split-MNIST continual learning
+# layer-shared metaplasticity coefficient
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -296,10 +296,7 @@ def mem_class_train (params):
 			ttt.append(len(temp_trainInd))
 		
 		with tqdm(total=n_tasks*maxE*int(np.mean(ttt))*nBins,desc="Run {} of params index {}".format(run,ind_),position=ind_) as pbar:
-			m_in_rec = np.zeros(n_tasks)
-			m_out_rec = np.zeros(n_tasks)
-			w_in_rec = np.zeros((n_h1, n_in, n_tasks))
-			w_out_rec = np.zeros(( n_out, n_h1, n_tasks))
+			
 			cross_ind_in = 0 
 			cross_ind_out = 0
 			for d in range(n_tasks): 
@@ -504,8 +501,6 @@ def mem_class_train (params):
 						if m_out > m_out_max:
 							m_out = m_out_max
 									
-				m_in_rec[d] = m_in
-				m_out_rec[d] = m_out
 
 				for d2 in range(d+1):
 
@@ -634,8 +629,8 @@ U_out =  2.5
 # metaplasticity parameters
 dm_in = 16e-4  
 dm_out = 6e-4    
-m_th_inL = [ 2.2, 2.3, 2.4]
-m_th_outL =  [0.6, 0.65, 0.7, 0.75] 
+m_th_inL = [ 2.2]
+m_th_outL =  [0.65] 
 m_in_max = 10
 m_out_max = 10
 
@@ -664,7 +659,7 @@ for i in m_th_inL:
 
 if __name__ == '__main__':
 
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock()) 
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/16))
 	p.map(mem_class_train, params)
 	p.close()
