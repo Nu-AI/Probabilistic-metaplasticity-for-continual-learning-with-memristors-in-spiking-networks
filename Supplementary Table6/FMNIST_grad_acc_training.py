@@ -1,3 +1,6 @@
+# split-Fashion MNIST classification with memristor weights
+# gradient accumulation
+
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy.matlib
@@ -11,8 +14,8 @@ import tensorflow as tf
 import keras
 from keras.datasets import fashion_mnist
 from keras.utils import to_categorical
-
 import time
+
 def res_param_config(mean_res, std_res, n_cross, w_hid_max, w_out_max):
 	# creating the array with n_cross res states
 	states = []
@@ -266,10 +269,7 @@ def train_run(params):
 			ttt.append(len(temp_trainInd))
 
 		with tqdm(total=n_tasks*maxE*int(np.mean(ttt))*nBins,desc="Run {} of params index {}".format(run,ind_),position=ind_) as pbar:
-			m_in_rec = np.zeros((n_h1, n_in, n_tasks))
-			m_out_rec = np.zeros((n_out, n_h1, n_tasks))
-			w_in_rec = np.zeros((n_h1, n_in, n_tasks))
-			w_out_rec = np.zeros(( n_out, n_h1, n_tasks))
+
 			m_in = np.zeros((n_h1, n_in))   # every run the metaplasticity factors start at 0
 			m_out = np.zeros((n_out, n_h1))
 			cross_ind_in = 0 
@@ -304,20 +304,18 @@ def train_run(params):
 						fr_label = np.zeros(n_out)
 						fr_label[int(taskLabelsF[u])] = maxFL # target output spiking frequencies
 						s_label = make_spike_trains(fr_label*dt_conv, nBins) # target spikes
-						#Xh_in = np.zeros(n_in)
+						
 
 						# Initialize hidden layer variables
 						I1 = np.zeros(n_h1)
 						V1 = np.zeros(n_h1)
 						U1 = np.zeros(n_h1)
-						#Xh_hid = np.zeros(n_h1)
 						U1_s = np.zeros((n_h1, n_in))
 
 						# Initialize output layer variables
 						I2 = np.zeros(n_out)
 						V2 = np.zeros(n_out)
 						U2 = np.zeros(n_out)
-						#Xh_out = np.zeros(n_out)
 						U2_s = np.zeros((n_out, n_h1))
 
 						# Initialize error neuron variables
@@ -334,7 +332,7 @@ def train_run(params):
 							# Find input neurons that spike
 							ST0 = spikeMat[:, t]
 							fired_in = np.nonzero(ST0)
-							#Xh_in = Xh_in + ST0 - Xh_in/t_tr
+							
 
 							# Update synaptic current into hidden layer
 							I1 += (dt/t_syn) * (w_in.dot(ST0) - I1)
@@ -353,7 +351,7 @@ def train_run(params):
 
 							ST1 = np.zeros(n_h1) # Hidden layer spiking activity
 							ST1[fired] = 1 # Set neurons that spiked to 1
-							#Xh_hid = Xh_hid + ST1 - Xh_hid/t_tr
+							
 
 							# Repeat the process for the output layer
 							I2 += (dt/t_syn1)*(w_out.dot(ST1) - I2)
@@ -371,7 +369,6 @@ def train_run(params):
 							# Make array of output neuron spikes
 							ST2 = np.zeros(n_out)
 							ST2[fired2] = 1
-							#Xh_out = Xh_out + ST2 - Xh_out/t_tr
 
 
 							# Compare with target spikes for this time step
@@ -473,11 +470,6 @@ def train_run(params):
 
 					Acc[d2, d, run] = check_accuracy(testSet, taskLabelsT, w_in, w_out )
 
-				m_in_rec[:, :, d] = m_in
-				m_out_rec[:, :, d] = m_out
-				w_in_rec[:, :, d] = w_in
-				w_out_rec[:, :, d] = w_out
-
 
 		t1 = time.time()
 		t_elapsed = t1 - t0
@@ -504,7 +496,6 @@ def train_run(params):
 	std_cont_acc = np.std(cont_acc)
 
 
-
 	results = {'U_in': U_in, 'U_out': U_out, 'class_Acc':class_Acc, 'class_std':class_std, 'class_cont_Acc':class_cont_Acc, 'class_cont_std':class_cont_std, 'cont_mean' : mean_cont_acc, 'cont_std' : std_cont_acc, 'c_in_count':c_in_count, 'c_out_count':c_out_count, 'Acc' : Acc}
 
 	jsonString = json.dumps(results, indent=4, cls=NumpyEncoder)
@@ -519,9 +510,6 @@ def train_run(params):
 	jsonFile = open(filename, "w")
 	jsonFile.write(jsonString)
 	jsonFile.close()
-	
-
-	
 
 	return cls_mean
 	
@@ -602,14 +590,12 @@ t_refr = 4 # Duration of refractory period
 Vth = (1/t_m)*R*Vs # Hidden neuron threshold
 VthO = (1/t_mH)*RH*VsO # Output neuron threshold
 VthE = (1/t_mE)*RE*VsE # Error neuron threshold
-U_inL = [0.6] #[ 0.8]
-U_outL =  [0.05] #[0.06]
+U_inL = [0.6] 
+U_outL =  [0.05] 
 
 # loading data
 TrainIm_, TrainL_, TestIm_, TestL_ = data_load()
 	
-
-
 
 ind_ = 0
 params = []
@@ -620,9 +606,9 @@ for i in U_inL:
 
 if __name__ == '__main__':
 
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock())  
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/32))
-	p.map(train_run, params) # temp_results.append(p.map(train__, params))
+	p.map(train_run, params) 
 	p.close()
 	p.join()
 
