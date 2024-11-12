@@ -532,8 +532,7 @@ taskID = np.array([[0, 1], [2, 3], [4, 5], [6,7], [8, 9]])
 #Learning rule parameters
 Imin = -3
 Imax = 3
-#lr0 = 0.1*lr_factor
-#lr1 = 1e-3*lr_factor
+
 w_scale0 = 1e-0 # Weight scale in hidden layer
 w_scale1 = 1e-0 # Weight scale at output layer
 FPF = 1 # inhibits punshing target neuron (only use if training a specific output spike pattern)
@@ -596,8 +595,8 @@ for i in prob_facL:
 
 if __name__ == '__main__':
 
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock()) 
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/16))
-	p.map(mem_class_train, params) # temp_results.append(p.map(train__, params))
+	p.map(mem_class_train, params) 
 	p.close()
 	p.join()
