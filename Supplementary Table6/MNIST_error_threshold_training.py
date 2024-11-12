@@ -594,12 +594,11 @@ Vth = (1/t_m)*R*Vs # Hidden neuron threshold
 VthO = (1/t_mH)*RH*VsO # Output neuron threshold
 VthE = (1/t_mE)*RE*VsE # Error neuron threshold
 
-# metaplasticity parameters
-#np.random.seed(2)
+
 seeds = []
 
 
-U_inL = [ 0.25] #, 0.3, 0.35, 0.4, 0.45, 0.5]
+U_inL = [ 0.25]
 U_outL =  [  2.25]
 
 
@@ -627,7 +626,7 @@ for i in U_inL:
 
 if __name__ == '__main__':
 
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock())  
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/8))
 	p.map(mem_class_train, params) 
 	p.close()
