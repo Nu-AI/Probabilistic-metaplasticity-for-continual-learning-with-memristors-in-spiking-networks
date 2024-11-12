@@ -628,8 +628,8 @@ for i in m_th_inL:
 
 if __name__ == '__main__':
 
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock())  
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/16))
-	p.map(mem_class_train, params) # temp_results.append(p.map(train__, params))
+	p.map(mem_class_train, params) 
 	p.close()
 	p.join()
