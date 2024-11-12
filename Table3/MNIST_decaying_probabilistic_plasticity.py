@@ -251,8 +251,6 @@ def mem_class_train (params):
 
 	np.random.seed(seed)
 	Acc = np.zeros((n_tasks,n_tasks,n_runs))
-	c_in_count = np.zeros((n_h1, n_in, n_tasks))
-	c_out_count = np.zeros((n_out, n_h1, n_tasks))
 	
 	for run in range(n_runs):
 		m_in = np.zeros((n_h1, n_in))   # every run the metaplasticity factors start at 0
@@ -442,7 +440,6 @@ def mem_class_train (params):
 											r_in_up = r_in[up_in_mem][:,current_ind]
 											r_in[up_in_mem[0], up_in_mem[1],current_ind] = res_program(r_in_up, c_up)
 											w_in[up_in_mem]  = res_to_weight(r_in[up_in_mem], R_fh, R_bh)
-											c_in_count[up_in_mem[0], up_in_mem[1],d] += 1
 											c_in = np.zeros([n_h1,n_in])
 										
 
@@ -468,7 +465,6 @@ def mem_class_train (params):
 											r_out_up = r_out[up_out_mem][:,current_ind]
 											r_out[up_out_mem[0], up_out_mem[1],current_ind] = res_program(r_out_up, c_up)
 											w_out[up_out_mem] = res_to_weight(r_out[up_out_mem], R_fo, R_bo)
-											c_out_count[up_out_mem[0], up_out_mem[1],d] += 1
 											c_out = np.zeros([n_out, n_h1]) 
 							pbar.update(1)
 
