@@ -423,9 +423,9 @@ def mem_class_train (params):
 										r_up = r_in[np.ix_(up_hid[post_ind], pre_ind[0], np.linspace(0,n_cross-1, n_cross ).astype(int))]
 										w_up = res_to_weight(r_up, R_fh, R_bh) #compute the candidate weights for update
 										w_th = (np.exp(-m_up*np.abs(w_up)))
+										# randomly shuffling update probabilities
 										a =np.linspace(0, w_th.shape[0]-1, w_th.shape[0]).astype(int)
 										b =np.linspace(0, w_th.shape[1]-1, w_th.shape[1]).astype(int)
-                                        # randomly shuffling update probabilities
 										np.random.shuffle(a)
 										np.random.shuffle(b)
 										w_th_shuffled = w_th[np.ix_(a,b)]
@@ -457,9 +457,9 @@ def mem_class_train (params):
 										r_up = r_out[np.ix_(up_out[post_ind], pre_ind[0], np.linspace(0,n_cross-1, n_cross ).astype(int))]
 										w_up = res_to_weight(r_up, R_fo, R_bo) #compute the candidate weights for update
 										w_th = (np.exp(-m_up*np.abs(w_up)))
+										# randomly shuffling update probabilities
 										a =np.linspace(0, w_th.shape[0]-1, w_th.shape[0]).astype(int)
 										b =np.linspace(0, w_th.shape[1]-1, w_th.shape[1]).astype(int)
-                                        # randomly shuffling update probabilities
 										np.random.shuffle(a)
 										np.random.shuffle(b)
 										w_th_shuffled = w_th[np.ix_(a,b)]
@@ -615,11 +615,11 @@ U_in = 0.45
 U_out =  2.25 
 
 # metaplasticity parameters
-dm_in = 40e-4   #1/250
-dm_out = 15e-4    #.1/250
+dm_in = 40e-4  
+dm_out = 15e-4    
 m_th_inL = [4.5]
 m_th_hidL = [2]
-m_th_outL =  [2.25] #, 2, 2.25]
+m_th_outL =  [2.25] 
 m_in_max = 14
 m_out_max = 14
 
@@ -638,9 +638,9 @@ for i in m_th_inL:
 
 
 if __name__ == '__main__':
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock())  
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/16))
-	p.map(mem_class_train, params) # temp_results.append(p.map(train__, params))
+	p.map(mem_class_train, params) 
 	p.close()
 	p.join()
 
