@@ -1,6 +1,6 @@
 
-#split-MNIST continual learning
-#shared metaplastic coefficient
+# split-MNIST continual learning
+# module-shared metaplastic coefficient
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -681,7 +681,7 @@ for i in range(m_th_inL.shape[0]):
 
 if __name__ == '__main__':
 
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock())  
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/16))
 	p.map(mem_class_train, params)
 	p.close()
