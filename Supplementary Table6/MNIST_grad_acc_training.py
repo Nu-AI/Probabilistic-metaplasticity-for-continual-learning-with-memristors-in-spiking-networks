@@ -1,3 +1,6 @@
+# split-MNIST classification with memristor weights
+# gradient accumulation
+
 import numpy as np
 import matplotlib.pyplot as plt
 import numpy.matlib
@@ -252,7 +255,7 @@ def train_run(params):
 	U_in = params["U_in"]
 	U_out = params["U_out"]
 
-	np.random.seed(2)
+	np.random.seed(seed)
 	Acc = np.zeros((n_tasks,n_tasks,n_runs))
 	
 	for run in range(n_runs):
@@ -268,8 +271,6 @@ def train_run(params):
 		TestLabels = TestL_[testInd]
 
 		
-
-
 		# Generate random feedback weights
 		w_err_factor = 0.15
 		w_err_h1p = ((np.random.rand(n_h1,n_out))*2-1)*w_err_factor # these are random numbers from -1 to 1
@@ -283,12 +284,7 @@ def train_run(params):
 			ttt.append(len(temp_trainInd))
 	
 		with tqdm(total=n_tasks*maxE*int(np.mean(ttt))*nBins,desc="Run {} of params index {}".format(run,ind_),position=ind_) as pbar:
-			m_in_rec = np.zeros((n_h1, n_in, n_tasks))
-			m_out_rec = np.zeros((n_out, n_h1, n_tasks))
-			w_in_rec = np.zeros((n_h1, n_in, n_tasks))
-			w_out_rec = np.zeros(( n_out, n_h1, n_tasks))
-			m_in = np.zeros((n_h1, n_in))   # every run the metaplasticity factors start at 0
-			m_out = np.zeros((n_out, n_h1))
+			
 			cross_ind_in = 0 
 			cross_ind_out = 0
 
@@ -484,11 +480,6 @@ def train_run(params):
 
 					Acc[d2, d, run] = check_accuracy(testSet, taskLabelsT, w_in, w_out )
 
-				m_in_rec[:, :, d] = m_in
-				m_out_rec[:, :, d] = m_out
-				w_in_rec[:, :, d] = w_in
-				w_out_rec[:, :, d] = w_out
-
 
 		t1 = time.time()
 		t_elapsed = t1 - t0
@@ -642,9 +633,9 @@ for i in U_inL:
 
 if __name__ == '__main__':
 
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock()) 
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/16))
-	p.map(train_run, params) # temp_results.append(p.map(train__, params))
+	p.map(train_run, params) 
 	p.close()
 	p.join()
 
