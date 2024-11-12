@@ -268,8 +268,6 @@ def mem_class_train (params):
 		w_err_h1n = w_err_h1p
 		
 		ttt = []
-		
-
 				
 		for dd in range(n_tasks):
 			temp_trainInd = np.concatenate((np.where(TrainLabels == taskID[dd,0])[0],np.where(TrainLabels == taskID[dd,1])[0]),axis=0)
@@ -484,8 +482,6 @@ def mem_class_train (params):
 						if m_out > m_out_max:
 							m_out = m_out_max
 									
-				m_in_rec[d] = m_in
-				m_out_rec[d] = m_out
 
 				for d2 in range(d+1):
 
