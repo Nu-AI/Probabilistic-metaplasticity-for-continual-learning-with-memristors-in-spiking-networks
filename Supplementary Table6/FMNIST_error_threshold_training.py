@@ -1,5 +1,4 @@
-
-# split-MNIST classification with memristor weights
+# split-Fashion MNIST classification with memristor weights
 
 import numpy as np
 import matplotlib.pyplot as plt
