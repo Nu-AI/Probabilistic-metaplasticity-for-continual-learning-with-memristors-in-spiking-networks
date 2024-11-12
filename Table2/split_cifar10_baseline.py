@@ -448,8 +448,6 @@ def mem_class_train (params):
 							w_out[up_out_mem] = res_to_weight(r_out[up_out_mem], R_fo, R_bo)
 							c_out = np.zeros([n_out, n_h1]) 
 							
-
-
 			
 
 				for d2 in range(d+1):
@@ -462,10 +460,6 @@ def mem_class_train (params):
 					taskLabelsT[taskID2] = 1
 
 					Acc[d2, d, run] = check_accuracy(testSet, taskLabelsT, w_in, w_out )
-					
-
-				
-
 
 
 	avg_task_acc = np.mean(Acc,axis=2)
@@ -594,7 +588,6 @@ U_outL =  [ 2.5]
 
 
 # loading data
-
 TrainIm_, TrainL_, TestIm_, TestL_ = data_load()
 TrainIm_ = np.array(TrainIm_) # convert to ndarray
 TrainL_ = np.array(TrainL_)
@@ -615,8 +608,8 @@ for i in U_inL:
 
 if __name__ == '__main__':
 
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock()) 
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/8))
-	p.map(mem_class_train, params) # temp_results.append(p.map(train__, params))
+	p.map(mem_class_train, params) 
 	p.close()
 	p.join()
