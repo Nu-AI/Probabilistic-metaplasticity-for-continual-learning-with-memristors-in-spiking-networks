@@ -489,10 +489,7 @@ def mem_class_train (params):
 						m_out[np.where(m_out > m_out_max)] = m_out_max
 						
 						
-						
-						  
-							
-
+			
 				for d2 in range(d+1):
 
 					testInd = np.concatenate((np.where(TestLabels == taskID[d2,0])[0],np.where(TestLabels == taskID[d2,1])[0]),axis=0)
@@ -651,8 +648,8 @@ for i in m_th_inL:
 
 if __name__ == '__main__':
 
-	tqdm.set_lock(RLock())  # for managing output contention
+	tqdm.set_lock(RLock()) 
 	p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),),processes = int(multiprocessing.cpu_count()/16))
-	p.map(mem_class_train, params) # temp_results.append(p.map(train__, params))
+	p.map(mem_class_train, params) 
 	p.close()
 	p.join()
