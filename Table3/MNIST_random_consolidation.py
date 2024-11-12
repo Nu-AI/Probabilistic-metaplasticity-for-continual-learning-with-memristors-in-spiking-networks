@@ -437,7 +437,7 @@ def mem_class_train (params):
 										w_th = (np.exp(-m_up*np.abs(w_up)))
 										a =np.linspace(0, w_th.shape[0]-1, w_th.shape[0]).astype(int)
 										b =np.linspace(0, w_th.shape[1]-1, w_th.shape[1]).astype(int)
-                                        # randomly shuffling the update probabilities
+                                        					# randomly shuffling the update probabilities
 										np.random.shuffle(a)
 										np.random.shuffle(b)
 										w_th_shuffled = w_th[np.ix_(a,b)]
@@ -471,7 +471,7 @@ def mem_class_train (params):
 										w_th = (np.exp(-m_up*np.abs(w_up)))
 										a =np.linspace(0, w_th.shape[0]-1, w_th.shape[0]).astype(int)
 										b =np.linspace(0, w_th.shape[1]-1, w_th.shape[1]).astype(int)
-                                        # randomly shuffling the update probabilities
+                                        					# randomly shuffling the update probabilities
 										np.random.shuffle(a)
 										np.random.shuffle(b)
 										w_th_shuffled = w_th[np.ix_(a,b)]
