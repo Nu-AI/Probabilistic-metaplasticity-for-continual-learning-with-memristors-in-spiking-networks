@@ -482,9 +482,6 @@ def mem_class_train (params):
  
 							
 
-
-			
-
 				for d2 in range(d+1):
 
 					testInd = np.concatenate((np.where(TestLabels == taskID[d2,0])[0],np.where(TestLabels == taskID[d2,1])[0]),axis=0)
