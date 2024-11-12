@@ -1,6 +1,6 @@
 
 # split-MNIST continual learning
-# layer-shared metaplastic coefficient
+# layer-shared metaplasticity coefficient
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -634,8 +634,8 @@ U_out =  2.5
 # metaplasticity parameters
 dm_in = 16e-4  
 dm_out = 6e-4    
-m_th_inL = [ 2.2, 2.3, 2.4]
-m_th_outL =  [0.6, 0.65, 0.7, 0.75] 
+m_th_inL = [ 2.2]
+m_th_outL =  [0.65] 
 m_in_max = 10
 m_out_max = 10
 
