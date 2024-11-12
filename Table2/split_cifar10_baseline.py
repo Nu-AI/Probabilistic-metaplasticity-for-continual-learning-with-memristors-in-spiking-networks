@@ -1,6 +1,6 @@
 
-# split-MNIST classification with memristor weights
-# no variability
+# split-CIFAR10 task with memristor weights
+# no continual learning mechanism
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -229,7 +229,6 @@ def check_accuracy(images, labels, w_in, w_out):
 		if np.count_nonzero(cnt) != 0:  # Avoid counting no spikes as predicting label 0
 			prediction = np.argmax(cnt)
 			target = labels[u]
-			#if cnt[0] != cnt[1]: # Avoid counting equal number of spikes as predicting label 0
 			if prediction == target:
 				numCorrect += 1
 
@@ -243,10 +242,6 @@ def mem_class_train (params):
 	np.random.seed(seed)
 	Acc = np.zeros((n_tasks,n_tasks,n_runs))
 	for run in range(n_runs):
-		#m_in = np.zeros((n_h1))   # every run the metaplasticity factors start at 0
-		#m_out = np.zeros((n_out))
-		
-		#print("Run",run)
 		# Randomly select train and test samples
 		trainInd = np.random.choice(len(TrainIm_), n_train, replace=False)
 		TrainIm = TrainIm_[trainInd]
@@ -272,15 +267,11 @@ def mem_class_train (params):
 			ttt.append(len(temp_trainInd))
 		
 		with tqdm(total=n_tasks*maxE*int(np.mean(ttt))*nBins,desc="Run {} of params index {}".format(run,ind_),position=ind_) as pbar:
-			#m_in_rec = np.zeros((n_h1, n_tasks))
-			#m_out_rec = np.zeros(( n_out, n_tasks))
-			#w_in_rec = np.zeros((n_h1, n_in, n_tasks))
-			#w_out_rec = np.zeros(( n_out, n_h1, n_tasks))
+		
 			cross_ind_in = 0 
 			cross_ind_out = 0
-			for d in range(n_tasks): #n_tasks
+			for d in range(n_tasks): 
 
-				#print("Task",d)
 				trainInd = np.concatenate((np.where(TrainLabels == taskID[d,0])[0],np.where(TrainLabels == taskID[d,1])[0]),axis=0)
 				n_train2 = len(trainInd)
 				trainInd2 = np.random.choice(len(trainInd), n_train2, replace=False)
@@ -293,11 +284,10 @@ def mem_class_train (params):
 
 				n_train2 = len(trainInd)
 				for e in range(maxE):
-					for u in range(n_train2): #n_train2
+					for u in range(n_train2): 
 						c_in = np.zeros([n_h1,n_in])   # for every sample the no of updates to w starts with 0
 						c_out = np.zeros([n_out, n_h1])
-						#if u%3000 == 0:
-						#	print("sample",u)
+						
 						im = trainSet[u]
 						fr = im*MaxF
 						spikeMat = MNIST_to_Spikes(MaxF, trainSet[u], tSim, dt_conv)
@@ -310,13 +300,13 @@ def mem_class_train (params):
 						I1 = np.zeros(n_h1)
 						V1 = np.zeros(n_h1)
 						U1 = np.zeros(n_h1)
-						#Xh_in = np.zeros(n_h1)
+						
 						
 						# Initialize output layer variables
 						I2 = np.zeros(n_out)
 						V2 = np.zeros(n_out)
 						U2 = np.zeros(n_out)
-						#Xh_out = np.zeros(n_out)
+						
 						
 						# Initialize error neuron variables
 						Verr1 = np.zeros(n_out)
@@ -349,7 +339,7 @@ def mem_class_train (params):
 
 							ST1 = np.zeros(n_h1) # Hidden layer spiking activity
 							ST1[fired] = 1 # Set neurons that spiked to 1
-							#Xh_in = Xh_in + ST1 - Xh_in/t_tr
+							
 							
 							# Repeat the process for the output layer
 							I2 += (dt/t_syn1)*(w_out.dot(ST1) - I2)
@@ -367,7 +357,7 @@ def mem_class_train (params):
 							# Make array of output neuron spikes
 							ST2 = np.zeros(n_out)
 							ST2[fired2] = 1
-							#Xh_out = Xh_out + ST2 - Xh_out/t_tr
+							
 
 							# Compare with target spikes for this time step
 							Ierr = (ST2 - s_label[:, t])
@@ -419,13 +409,7 @@ def mem_class_train (params):
 										s = np.sign(U1[up_hid[post_ind]])  # getting the sign of the errors, it is 1 if U2 positive, -1 if if U2 negative, 0 if U2 is zero
 										U1[up_hid[post_ind]] = 0
 										pre_ind = fired_in  # collects the location of the pre-synaptic neurons
-										
-										UF = np.matlib.repmat(np.reshape(s, (len(s),1)),1, len(pre_ind[0])) # extends the error
-										#r_up = r_in[np.ix_(up_hid[post_ind], pre_ind[0], np.linspace(0,n_cross-1, n_cross ).astype(int))]
-										#w_up = res_to_weight(r_up, R_fh, R_bh) #compute the candidate weights for update
-										#w_th = (np.exp(-m_up*np.abs(w_up)))
-										#w_rand = np.random.rand()
-										#UF[np.where(w_rand>w_th)] = 0 
+										UF = np.matlib.repmat(np.reshape(s, (len(s),1)),1, len(pre_ind[0]))
 										c_in[np.ix_(up_hid[post_ind], pre_ind[0])] -= UF 
 										
 
@@ -437,13 +421,7 @@ def mem_class_train (params):
 										s = np.sign(U2[up_out[post_ind]]) 
 										U2[up_out[post_ind]] = 0
 										pre_ind = fired  # collects the location of the pre-synaptic neurons
-										#m_up = m_out[np.ix_(up_out[post_ind], pre_ind[0])] # takes the m value of the post-synaptic neuron
 										UF = np.matlib.repmat(np.reshape(s, (len(s),1)),1, len(pre_ind[0])) # extends the error
-										#r_up = r_out[np.ix_(up_out[post_ind], pre_ind[0], np.linspace(0,n_cross-1, n_cross ).astype(int))]
-										#w_up = res_to_weight(r_up, R_fo, R_bo) #compute the candidate weights for update
-										#w_th = (np.exp(-m_up*np.abs(w_up)))
-										#w_rand = np.random.rand()
-										#UF[np.where(w_rand>w_th)] =0 
 										c_out[np.ix_(up_out[post_ind], pre_ind[0])] -= UF 
 							pbar.update(1)
 
@@ -451,7 +429,6 @@ def mem_class_train (params):
 
 						up_in_mem = np.where(c_in!=0)
 						if len(up_in_mem[0])>0:
-							
 							cross_ind_in = cross_ind_in+1 
 							current_ind = int(cross_ind_in%n_cross)
 							c_up = c_in[up_in_mem]
@@ -524,15 +501,11 @@ def mem_class_train (params):
 	jsonFile = open(filename, "w")
 	jsonFile.write(jsonString)
 	jsonFile.close()
-	#for i in range(n_tasks):
-	#	print("for tasks no ",i, "the mean and std is ",avg_task_acc[i,i]," ",avg_task_std[i,i])
-
-
+	
 
 	return results
 	
-#def update(*a): 
-#	pbar.update()
+
 	
 #weight parameters
 lr_factor = 7
@@ -612,11 +585,10 @@ VthO = (1/t_mH)*RH*VsO # Output neuron threshold
 VthE = (1/t_mE)*RE*VsE # Error neuron threshold
 
 # metaplasticity parameters
-#np.random.seed(2)
+
 seeds = []
 
-
-U_inL = [ 0.3]#, 0.35, 0.4, 0.45, 0.5]
+U_inL = [ 0.3]
 U_outL =  [ 2.5]
 
 
