@@ -242,7 +242,7 @@ def train_run(params):
 	U_in = params["U_in"]
 	U_out = params["U_out"]
 
-	np.random.seed(2)
+	np.random.seed(seed)
 	Acc = np.zeros((n_tasks,n_tasks,n_runs))
 	
 	for run in range(n_runs):
@@ -601,7 +601,7 @@ ind_ = 0
 params = []
 for i in U_inL:
 	for j in U_outL:
-		params.append({'ind':ind_, 'U_in':i, 'U_out':j, "seed" : 100})
+		params.append({'ind':ind_, 'U_in':i, 'U_out':j, "seed" : 2})
 		ind_+=1
 
 if __name__ == '__main__':
