@@ -1,6 +1,6 @@
 
 # split-MNIST continual learning
-# neuron-shared metaplastic coefficient
+# neuron-shared metaplasticity coefficient
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -204,7 +204,7 @@ def check_accuracy(images, labels, w_in, w_out):
 			V1[V1 < -Vth/10] = -Vth/10 # Limit negative potential to -Vth/10
 
 			# Clear membrane potential of hidden neurons that spiked more
-			# recently than t_refr
+			# ently than t_refr
 			V1[t*dt - ts1 <= t_refr] = 0
 
 			## Process hidden neuron spikes
@@ -286,10 +286,7 @@ def mem_class_train (params):
 			ttt.append(len(temp_trainInd))
 		
 		with tqdm(total=n_tasks*maxE*int(np.mean(ttt))*nBins,desc="Run {} of params index {}".format(run,ind_),position=ind_) as pbar:
-			m_in_rec = np.zeros((n_h1, n_tasks))
-			m_out_rec = np.zeros(( n_out, n_tasks))
-			w_in_rec = np.zeros((n_h1, n_in, n_tasks))
-			w_out_rec = np.zeros(( n_out, n_h1, n_tasks))
+			
 			cross_ind_in = 0 
 			cross_ind_out = 0
 			for d in range(n_tasks): 
